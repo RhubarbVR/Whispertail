@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Whispertail</title>
+    <base href="/" />
+    <link rel="icon" type="image/x-icon" href="/_content/Whispertail_Shared/favicon.ico">
+    <link href="Whispertail.styles.css" rel="stylesheet" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/_content/Whispertail_Shared/icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/_content/Whispertail_Shared/icon-192.png" />
+    <link href="/_content/Whispertail_Shared/css/app.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="app">
+        <div class='LoadingCube-container'>
+            <div class='cube'>
+                <div class='front'></div>
+                <div class='back'></div>
+                <div class='right'></div>
+                <div class='left'></div>
+                <div class='top'></div>
+                <div class='bottom'></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.webview.js" autostart="false"></script>
+    <script type="module" src="./_content/Microsoft.Fast.Components.FluentUI/js/web-components.min.js" async=""></script>
+
+
+    <!-- Monaco Editor -->
+    <script src="_content/Whispertail_Shared/lib/monaco-editor/min/vs/loader.min.js"></script>
+    <script>require.config({ paths: { 'vs': '_content/Whispertail_Shared/lib/monaco-editor/min/vs' } });</script>
+    <script src="_content/Whispertail_Shared/lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+
+    <!-- highlight -->
+    <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.6.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-cshtml-razor@2.1.1/dist/cshtml-razor.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-copy@1.0.3/dist/highlightjs-copy.min.js"></script>
+    <script>
+        if (hljs != null) {
+            hljs.addPlugin(new CopyButtonPlugin());
+        }
+    </script>
+</body>
+
+</html>

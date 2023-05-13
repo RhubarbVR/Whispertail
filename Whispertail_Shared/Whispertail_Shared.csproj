@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseRazorSourceGenerator>true</UseRazorSourceGenerator>
+		<PublishFluentIconAssets>true</PublishFluentIconAssets>
+		<FluentIconSizes>10,12,16,20,24,28,32,48</FluentIconSizes>
+		<FluentIconVariants>Filled,Regular</FluentIconVariants>
+		<PublishFluentEmojiAssets>true</PublishFluentEmojiAssets>
+		<FluentEmojiGroups>Activities,Animals_Nature,Flags,Food_Drink,Objects,People_Body,Smileys_Emotion,Symbols,Travel_Places</FluentEmojiGroups>
+		<FluentEmojiStyles>Color,Flat,HighContrast</FluentEmojiStyles>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)'=='net6.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.16" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)'=='net7.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Fast.Components.FluentUI" Version="2.3.0" />
+	</ItemGroup>
+
+</Project>
