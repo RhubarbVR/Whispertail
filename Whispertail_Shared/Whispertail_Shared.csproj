@@ -29,4 +29,8 @@
 		<PackageReference Include="Microsoft.Fast.Components.FluentUI" Version="2.3.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\GabbracoonClient\GabbracoonClient\GabbracoonClient.csproj" />
+	</ItemGroup>
+
 </Project>
