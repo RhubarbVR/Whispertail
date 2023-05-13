@@ -28,7 +28,6 @@ namespace Whispertail_Web.Client
 			});
 
 			var builet = builder.Build();
-
 			await builet.RunAsync();
 		}
 	}
