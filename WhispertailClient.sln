@@ -18,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whispertail", "Whispertail\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whispertail_Web", "Whispertail_Web\Whispertail_Web.csproj", "{1A80A7E8-5EFE-4BB9-BE14-8A1AF972416B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GabbracoonClient", "..\GabbracoonClient\GabbracoonClient\GabbracoonClient.csproj", "{245958AC-88EA-46BF-BB41-13DE76D7A37C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GabbracoonClient", "..\GabbracoonClient\GabbracoonClient\GabbracoonClient.csproj", "{245958AC-88EA-46BF-BB41-13DE76D7A37C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RequestModels", "..\GabbracoonClient\RequestModels\RequestModels.csproj", "{5EAECA89-CDE0-4F84-9ECA-919A5C986CAE}"
 EndProject

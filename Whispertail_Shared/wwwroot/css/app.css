@@ -1,23 +1,11 @@
-﻿﻿@import '/_content/Microsoft.Fast.Components.FluentUI/css/reboot.css';
-
-body {
-    color: #222;
+﻿body {
     background: #fff;
-}
-
-a {
-    color: #0033cc;
 }
 
 @media (prefers-color-scheme: dark) {
     body {
-        color: #eee;
         background: #121212;
     }
-
-        body a {
-            color: #809fff;
-        }
 }
 
 #blazor-error-ui {
@@ -31,6 +19,7 @@ a {
     width: 100%;
     z-index: 1000;
     margin: 20px 0;
+    color: black;
 }
 
     #blazor-error-ui .dismiss {

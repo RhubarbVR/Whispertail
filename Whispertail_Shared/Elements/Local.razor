@@ -1,0 +1,16 @@
+﻿@inject Localisation localizer
+
+@localizer.GetLocalString(DataString)
+
+@code {
+
+    [Parameter]
+    public string DataString { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        localizer.LocalReload += StateHasChanged;
+    }
+}

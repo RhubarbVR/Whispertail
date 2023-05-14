@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Reflection;
 using Microsoft.Fast.Components.FluentUI;
 using Microsoft.Fast.Components.FluentUI.DesignTokens;
+using GabbracoonClient;
 
 namespace Whispertail_Web.Client
 {
@@ -27,8 +28,13 @@ namespace Whispertail_Web.Client
 				options.EmojiConfiguration = ConfigurationGenerator.GetEmojiConfiguration();
 			});
 
-			var builet = builder.Build();
-			await builet.RunAsync();
+			builder.Services.AddScoped<ThemeManager>();
+			builder.Services.AddSingleton<GabbracoonClientManager>();
+			static IEnumerable<string> GetFiles() {
+				return Assembly.GetAssembly(typeof(DynamicLocalisation))?.GetManifestResourceNames() ?? Array.Empty<string>();
+			}
+			builder.Services.AddScoped<Localisation>((thing) => new DynamicLocalisation(GetFiles, (item) => new StreamReader(Assembly.GetAssembly(typeof(DynamicLocalisation)).GetManifestResourceStream(item)).ReadToEnd(), null));
+			await builder.Build().RunAsync();
 		}
 	}
 }

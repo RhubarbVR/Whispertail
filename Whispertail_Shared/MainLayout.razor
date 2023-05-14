@@ -1,18 +1,79 @@
 ﻿@inherits LayoutComponentBase
+@implements IAsyncDisposable
+@inject ThemeManager Theme
+@inject IJSRuntime JSRuntime
 
-<div id="container" @ref="container">
-    <main>
+<div id="container" @ref="container" hidden="@(!_hasLoadedUI)">
+    <div style="background-color:var(--fill-color); width: 100vw; height: 100vh; position:fixed; top:0px;left:0px;">
         @Body
-    </main>
+    </div>
 </div>
 
 @code {
 
-    ElementReference container;
+    private IJSObjectReference _jsModule;
 
-    protected async override Task OnInitializedAsync()
+    private ElementReference container;
+
+    private DotNetObjectReference<MainLayout> _objRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await base.OnInitializedAsync();
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            await UpdateTheme();
+        }
+    }
 
+    private bool _hasLoadedUI = false;
+
+    [JSInvokable]
+    public async Task UpdateTheme()
+    {
+        await Theme.UpdateTheme(container, await IsDarkMode());
+        _hasLoadedUI = true;
+        StateHasChanged();
+    }
+
+    public async Task<bool> IsDarkMode()
+    {
+        await CheckJsModule();
+        return await _jsModule!.InvokeAsync<bool>("isDarkMode");
+    }
+
+    private bool? _isMobile;
+
+    public async Task<bool> IsMobile()
+    {
+        await CheckJsModule();
+        return _isMobile ??= await _jsModule!.InvokeAsync<bool>("isDevice");
+    }
+
+    private async Task CheckJsModule()
+    {
+        _jsModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/Whispertail_Shared/MainLayout.razor.js");
+        if (_objRef is null)
+        {
+            _objRef = DotNetObjectReference.Create(this);
+            await _jsModule.InvokeVoidAsync("themeChangeInitialize", _objRef);
+            ThemeManager.ThemeChangeRequest = UpdateTheme;
+        }
+
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        try
+        {
+            if (_jsModule is not null)
+            {
+                await _jsModule.DisposeAsync();
+            }
+            _objRef?.Dispose();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
     }
 }

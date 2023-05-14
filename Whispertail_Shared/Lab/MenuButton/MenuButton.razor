@@ -39,7 +39,7 @@
         {
             // Remeber to replace the path to the colocated JS file with your own project's path
             // or Razor Class Library's path.
-            jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/FluentUI.Demo.Shared/Pages/Lab/MenuButton/MenuButton.razor.js");
+            jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/Whispertail_Shared/Pages/Lab/MenuButton/MenuButton.razor.js");
             await jsModule.InvokeAsync<object>("clickOutsideHandler", idButton, idMenu, DotNetObjectReference.Create(this));
         }
 

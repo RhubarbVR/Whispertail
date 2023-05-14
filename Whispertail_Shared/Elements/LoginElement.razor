@@ -1,0 +1,150 @@
+﻿@using RequestModels;
+@using System.ComponentModel.DataAnnotations;
+@inject GabbracoonClientManager clientManager
+@inject Localisation localizer
+
+<Stack Style="width: 100%; height:100%" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Center" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="5">
+    <LoadingLogo Size="130" IsLoading=IsLoading />
+
+    <p style="color: var(--accent-fill-rest)"><Local DataString="@ErrorMessage" /></p>
+
+    <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
+        <p><Local DataString="Gabbracoon.Platform" /></p>
+        <FluentCombobox Required="true" Style="width: 250pt;" Autocomplete="ComboboxAutocomplete.Both" Placeholder="@localizer.GetLocalString("Gabbracoon.Platform.NameOrIP")" Items="@_supportedPlatforms" @bind-Value="@SelectedPlatform" />
+    </Stack>
+
+    <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
+        <p><Local DataString="Programs.Login.Email" /></p>
+        <LocalTextField Form Style="width: 250pt;" @bind-Value=Email TextFieldType="TextFieldType.Email" Spellcheck="true" Placeholder="Programs.Login.Email" />
+    </Stack>
+
+    @if (IsRegister)
+    {
+        <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
+            <p><Local DataString="Programs.Login.Username" /></p>
+            <LocalTextField Form Style="width: 250pt;" @bind-Value=Username Placeholder="Programs.Login.Username" />
+        </Stack>
+
+        <FluentButton @onclick=ExecuteAction Style="width: 150pt;" Appearance="Appearance.Accent"><Local DataString="Programs.Login.RegisterButton" /></FluentButton>
+        <p>@localizer.GetLocalString("Programs.Login.LoginText")<text>&nbsp; &nbsp;</text><a href="javascript:void(0)" @onclick="GoToLogin">@localizer.GetLocalString("Programs.Login.LoginButton")</a></p>
+    }
+    else
+    {
+        <FluentButton @onclick=ExecuteAction Style="width: 150pt;" Appearance="Appearance.Accent"><Local DataString="Programs.Login.LoginButton" /></FluentButton>
+        <p>@localizer.GetLocalString("Programs.Login.RegisterText")<text>&nbsp; &nbsp;</text><a href="javascript:void(0)" @onclick="GoToRegister">@localizer.GetLocalString("Programs.Login.RegisterButton")</a></p>
+    }
+
+</Stack>
+
+
+@code {
+
+    public string ErrorMessage = "";
+
+    public string Username;
+
+    public string Email;
+
+    public string SelectedPlatform = "RhubarbVR";
+
+    private string[] _supportedPlatforms = new string[] { "RhubarbVR" };
+
+    private bool IsLoading;
+
+    private bool IsRegister;
+
+    public void GoToLogin()
+    {
+        IsRegister = false;
+    }
+
+    public void GoToRegister()
+    {
+        IsRegister = true;
+    }
+
+    bool IsValidEmail(string email)
+    {
+        var trimmedEmail = email.Trim();
+
+        if (trimmedEmail.EndsWith("."))
+        {
+            return false;
+        }
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == trimmedEmail;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task ExecuteAction()
+    {
+        if (IsLoading)
+        {
+            return;
+        }
+        ErrorMessage = "";
+        if (string.IsNullOrEmpty(SelectedPlatform))
+        {
+            ErrorMessage = "Gabbracoon.Validator.Platform";
+            return;
+        }
+        if (string.IsNullOrEmpty(Email) || !IsValidEmail(Email))
+        {
+            ErrorMessage = "Gabbracoon.Validator.Email";
+            return;
+        }
+        if (IsRegister)
+        {
+            if (string.IsNullOrEmpty(Username))
+            {
+                ErrorMessage = "Gabbracoon.Validator.Username";
+                return;
+            }
+        }
+        IsLoading = true;
+        var (isVailed, targetURI) = await clientManager.IsVailedPlatform(SelectedPlatform);
+        if (!isVailed)
+        {
+            ErrorMessage = "Gabbracoon.Validator.PlatformConnectionError";
+            IsLoading = false;
+            return;
+        }
+        if (IsRegister)
+        {
+            try
+            {
+                var result = await clientManager.RegisterAccount(targetURI, new RegisterAccount { Username = Username, Email = Email });
+                if (!result.created)
+                {
+                    ErrorMessage = result.error_msg.DataString;
+                }
+                else
+                {
+                    GoToLogin();
+                }
+            }
+            catch
+            {
+                ErrorMessage = "API.DefaultError";
+            }
+            IsLoading = false;
+            return;
+        }
+
+
+
+        IsLoading = false;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        localizer.LocalReload += StateHasChanged;
+    }
+}

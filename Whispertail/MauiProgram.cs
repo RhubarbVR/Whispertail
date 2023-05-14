@@ -12,6 +12,7 @@ using System.Reflection.Metadata;
 using System.Runtime.Intrinsics.X86;
 using Microsoft.Fast.Components.FluentUI.Infrastructure;
 using System.Drawing;
+using GabbracoonClient;
 
 namespace Whispertail
 {
@@ -30,6 +31,13 @@ namespace Whispertail
 			});
 			builder.Services.AddScoped<IStaticAssetService, FileBasedStaticAssetService>();
 
+			builder.Services.AddScoped<ThemeManager>();
+			builder.Services.AddSingleton<GabbracoonClientManager>();
+
+			static IEnumerable<string> GetFiles() {
+				return Assembly.GetAssembly(typeof(Localisation))?.GetManifestResourceNames() ?? Array.Empty<string>();
+			}
+			builder.Services.AddScoped<Localisation>((thing) => new DynamicLocalisation(GetFiles, (item) => new StreamReader(Assembly.GetAssembly(typeof(Localisation)).GetManifestResourceStream(item)).ReadToEnd(), null));
 #if DEBUG
 			builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
