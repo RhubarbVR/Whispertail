@@ -13,6 +13,9 @@ using System.Runtime.Intrinsics.X86;
 using Microsoft.Fast.Components.FluentUI.Infrastructure;
 using System.Drawing;
 using GabbracoonClient;
+using Blazored.SessionStorage;
+using Blazored.LocalStorage;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Whispertail
 {
@@ -31,7 +34,13 @@ namespace Whispertail
 			});
 			builder.Services.AddScoped<IStaticAssetService, FileBasedStaticAssetService>();
 
+			builder.Services.AddBlazoredSessionStorage();
+			builder.Services.AddBlazoredLocalStorage();
+			builder.Services.AddSingleton<IGabbaLocalStorage, LocalStorageLink>();
+			builder.Services.AddSingleton<IGabbaSsessionStorage, SessionStorageLink>();
+
 			builder.Services.AddScoped<ThemeManager>();
+
 			builder.Services.AddSingleton<GabbracoonClientManager>();
 
 			static IEnumerable<string> GetFiles() {

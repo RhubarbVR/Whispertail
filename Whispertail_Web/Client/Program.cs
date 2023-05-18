@@ -11,6 +11,8 @@ using System.Reflection;
 using Microsoft.Fast.Components.FluentUI;
 using Microsoft.Fast.Components.FluentUI.DesignTokens;
 using GabbracoonClient;
+using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 
 namespace Whispertail_Web.Client
 {
@@ -28,8 +30,13 @@ namespace Whispertail_Web.Client
 				options.EmojiConfiguration = ConfigurationGenerator.GetEmojiConfiguration();
 			});
 
+			builder.Services.AddBlazoredSessionStorage();
+			builder.Services.AddBlazoredLocalStorage();
+			builder.Services.AddScoped<IGabbaLocalStorage, LocalStorageLink>();
+			builder.Services.AddScoped<IGabbaSsessionStorage, SessionStorageLink>();
+
 			builder.Services.AddScoped<ThemeManager>();
-			builder.Services.AddSingleton<GabbracoonClientManager>();
+			builder.Services.AddScoped<GabbracoonClientManager>();
 			static IEnumerable<string> GetFiles() {
 				return Assembly.GetAssembly(typeof(DynamicLocalisation))?.GetManifestResourceNames() ?? Array.Empty<string>();
 			}

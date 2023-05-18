@@ -57,7 +57,7 @@
         {
             _objRef = DotNetObjectReference.Create(this);
             await _jsModule.InvokeVoidAsync("themeChangeInitialize", _objRef);
-            ThemeManager.ThemeChangeRequest = UpdateTheme;
+            ThemeManager._themeChangeRequest = UpdateTheme;
         }
 
     }
