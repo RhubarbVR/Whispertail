@@ -10,9 +10,9 @@ using System.Net.Http;
 using System.Reflection;
 using Microsoft.Fast.Components.FluentUI;
 using Microsoft.Fast.Components.FluentUI.DesignTokens;
-using GabbracoonClient;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
+using Nakama;
 
 namespace Whispertail_Web.Client
 {
@@ -32,15 +32,15 @@ namespace Whispertail_Web.Client
 
 			builder.Services.AddBlazoredSessionStorage();
 			builder.Services.AddBlazoredLocalStorage();
-			builder.Services.AddScoped<IGabbaLocalStorage, LocalStorageLink>();
-			builder.Services.AddScoped<IGabbaSsessionStorage, SessionStorageLink>();
+
+			builder.Services.AddSingleton(new ClientManager(new Nakama.Client(new Uri("http://127.0.0.1:7350/"), "defaultkey")));
 
 			builder.Services.AddScoped<ThemeManager>();
-			builder.Services.AddScoped<GabbracoonClientManager>();
+
 			static IEnumerable<string> GetFiles() {
-				return Assembly.GetAssembly(typeof(DynamicLocalisation))?.GetManifestResourceNames() ?? Array.Empty<string>();
+				return Assembly.GetAssembly(typeof(Localisation.DynamicLocalisation))?.GetManifestResourceNames() ?? Array.Empty<string>();
 			}
-			builder.Services.AddScoped<Localisation>((thing) => new DynamicLocalisation(GetFiles, (item) => new StreamReader(Assembly.GetAssembly(typeof(DynamicLocalisation)).GetManifestResourceStream(item)).ReadToEnd(), null));
+			builder.Services.AddScoped<Localisation.Localisation>((thing) => new Localisation.DynamicLocalisation(GetFiles, (item) => new StreamReader(Assembly.GetAssembly(typeof(Localisation.DynamicLocalisation)).GetManifestResourceStream(item)).ReadToEnd(), null));
 			await builder.Build().RunAsync();
 		}
 	}

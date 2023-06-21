@@ -1,64 +1,56 @@
 ﻿@using Microsoft.Extensions.Logging;
-@using RequestModels;
 @using System.ComponentModel.DataAnnotations;
-@inject GabbracoonClientManager clientManager
+@using Nakama;
 @inject Localisation localizer
 @inject ILogger<LoginElement> Logger
-
-<Stack Style="width: 100%; height:100%" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Center" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="5">
+@inject ClientManager clientManager
+<Stack Style="width: 100%; height:100%" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Center" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
     <LoadingLogo Size="130" IsLoading=IsLoading />
-    <h1>Whispertail</h1>
-    <h2><Local DataString="Programs.Login.Login" /></h2>
-    <p style="color: var(--accent-fill-rest)"><Local DataString="@ErrorMessage" /></p>
-    @if ((LoginLocations?.Length ?? 0) == 0)
+    @if (IsRegister)
     {
-        <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
-            <p><Local DataString="Gabbracoon.Platform" /></p>
-            <FluentCombobox Required="true" Style="width: 250pt;" Autocomplete="ComboboxAutocomplete.Both" Placeholder="@localizer.GetLocalString("Gabbracoon.Platform.NameOrIP")" Items="@_supportedPlatforms" @bind-Value="@SelectedPlatform" />
-        </Stack>
-
-        <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
-            <p><Local DataString="Programs.Login.Email" /></p>
-            <LocalTextField Style="width: 250pt;" @bind-Value=Email TextFieldType="TextFieldType.Email" Spellcheck="true" Placeholder="Programs.Login.Email" />
-        </Stack>
-
-        @if (IsRegister)
-        {
-            <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
-                <p><Local DataString="Programs.Login.Username" /></p>
-                <LocalTextField Style="width: 250pt;" @bind-Value=Username Placeholder="Programs.Login.Username" />
-            </Stack>
-
-            <FluentButton @onclick=ExecuteAction Style="width: 150pt;" Appearance="Appearance.Accent"><Local DataString="Programs.Login.RegisterButton" /></FluentButton>
-            <p>@localizer.GetLocalString("Programs.Login.LoginText")<text>&nbsp; &nbsp;</text><a href="javascript:void(0)" @onclick="GoToLogin">@localizer.GetLocalString("Programs.Login.LoginButton")</a></p>
-        }
-        else
-        {
-            <FluentButton @onclick=ExecuteAction Style="width: 150pt;" Appearance="Appearance.Accent"><Local DataString="Programs.Login.LoginButton" /></FluentButton>
-            <p>@localizer.GetLocalString("Programs.Login.RegisterText")<text>&nbsp; &nbsp;</text><a href="javascript:void(0)" @onclick="GoToRegister">@localizer.GetLocalString("Programs.Login.RegisterButton")</a></p>
-        }
+        <h2><Local DataString="Programs.Login.Register" /></h2>
     }
     else
     {
-        @if (usedAuthLocation != -1)
-        {
-            <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
-                <p><Local DataString="Gabbra.InputName" /></p>
-                <LocalTextField Style="width: 250pt;" @bind-Value=authRequest.AuthCode TextFieldType="TextFieldType.Text" Placeholder="Gabbra.Placeholder" />
-            </Stack>
-            <FluentButton @onclick=RunLoginAction Style="width: 150pt;" Appearance="Appearance.Accent"><Local DataString="Programs.Login.LoginButton" /></FluentButton>
-        }
-        else
-        {
-
-            <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Center" VerticalAlignment="StackVerticalAlignment.Center">
-                @foreach (var (data, index) in LoginLocations.WithIndex())
-                {
-                    <FluentButton Style="width:100%; height:150pt" @onclick="async ()=> await SelectOption(index)" Appearance="Appearance.Lightweight">@data</FluentButton>
-                }
-            </Stack>
-        }
+        <h2><Local DataString="Programs.Login.Login" /></h2>
     }
+    <p style="color: var(--accent-fill-rest);"><Local DataString="@ErrorMessage" /></p>
+
+
+    @if (IsRegister)
+    {
+        <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
+            <p><Local DataString="Programs.Login.Username" /></p>
+            <LocalTextField Style="width: 250pt;" @bind-Value=Username Placeholder="Programs.Login.Username" />
+        </Stack>
+    }
+
+    <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
+        <p><Local DataString="Programs.Login.Email" /></p>
+        <LocalTextField Style="width: 250pt;" @bind-Value=Email TextFieldType="TextFieldType.Email" Placeholder="Programs.Login.Email" />
+    </Stack>
+
+    <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
+        <p><Local DataString="Programs.Login.Password" /></p>
+        <LocalTextField Style="width: 250pt;" @bind-Value=Password TextFieldType="TextFieldType.Password" Placeholder="Programs.Login.Password" />
+    </Stack>
+
+    @if (IsRegister)
+    {
+        <Stack Style="width: auto; height: auto" Orientation="Orientation.Vertical" HorizontalAlignment="StackHorizontalAlignment.Left" VerticalAlignment="StackVerticalAlignment.Center" VerticalGap="3">
+            <p><Local DataString="Programs.Login.ConfirmPassword" /></p>
+            <LocalTextField Style="width: 250pt;" @bind-Value=ConfPassword TextFieldType="TextFieldType.Password" Placeholder="Programs.Login.ConfirmPassword" />
+        </Stack>
+
+        <FluentButton @onclick=ExecuteAction Style="width: 150pt;" Appearance="Appearance.Accent"><Local DataString="Programs.Login.RegisterButton" /></FluentButton>
+        <p>@localizer.GetLocalString("Programs.Login.LoginText")<text>&nbsp; &nbsp;</text><a href="javascript:void(0)" @onclick="GoToLogin">@localizer.GetLocalString("Programs.Login.LoginButton")</a></p>
+    }
+    else
+    {
+        <FluentButton @onclick=ExecuteAction Style="width: 150pt;" Appearance="Appearance.Accent"><Local DataString="Programs.Login.LoginButton" /></FluentButton>
+        <p>@localizer.GetLocalString("Programs.Login.RegisterText")<text>&nbsp; &nbsp;</text><a href="javascript:void(0)" @onclick="GoToRegister">@localizer.GetLocalString("Programs.Login.RegisterButton")</a></p>
+    }
+
 
 </Stack>
 
@@ -69,11 +61,10 @@
 
     public string Username;
 
+    public string Password;
+    public string ConfPassword;
+
     public string Email;
-
-    public string SelectedPlatform = "RhubarbVR";
-
-    private string[] _supportedPlatforms = new string[] { "RhubarbVR" };
 
     private bool IsLoading;
 
@@ -108,78 +99,6 @@
         }
     }
 
-    private string[] LoginLocations = Array.Empty<string>();
-
-    private Uri TargetPlatform;
-
-    private AuthRequest authRequest = new();
-
-    private int usedAuthLocation = -1;
-
-    public async Task SelectOption(int loction)
-    {
-        try
-        {
-            clientManager.CreateNewClient(TargetPlatform, Email, loction);
-            usedAuthLocation = loction;
-            await RunLoginAction();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError($"Failed to SelectOption in login. Error: {ex}");
-        }
-    }
-
-
-
-    public async Task RunLoginAction()
-    {
-        try
-        {
-            IsLoading = true;
-            if (authRequest.TargetProvider is not null)
-            {
-                Logger.LogInformation($"login Authinticate");
-                var loginError = await clientManager.Client.Authinticate(authRequest);
-                if (loginError is not null)
-                {
-                    ErrorMessage = loginError.DataString;
-                    IsLoading = false;
-                    return;
-                }
-            }
-            Logger.LogInformation($"login StepingLogin");
-            var (error, privateUserData, missingAuth) = await clientManager.Client.Login();
-            if (error is not null)
-            {
-                ErrorMessage = error.DataString;
-                IsLoading = false;
-                return;
-            }
-            if (missingAuth is not null)
-            {
-                authRequest.TargetProvider = missingAuth.AuthProviderType;
-                authRequest.TargetTokenAsString = missingAuth.TargetTokenAsString;
-                authRequest.AuthCode = null;
-                IsLoading = false;
-                return;
-            }
-            if (privateUserData is not null)
-            {
-                //todo nav to client screen
-                Logger.LogInformation($"Login to {privateUserData.Username}");
-                IsLoading = false;
-                return;
-            }
-            authRequest = new();
-            IsLoading = false;
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError($"Failed to RunLoginAction in login. Error: {ex}");
-        }
-    }
-
     public async Task ExecuteAction()
     {
         try
@@ -189,14 +108,14 @@
                 return;
             }
             ErrorMessage = "";
-            if (string.IsNullOrEmpty(SelectedPlatform))
-            {
-                ErrorMessage = "Gabbracoon.Validator.Platform";
-                return;
-            }
             if (string.IsNullOrEmpty(Email) || !IsValidEmail(Email))
             {
                 ErrorMessage = "Gabbracoon.Validator.Email";
+                return;
+            }
+            if (string.IsNullOrEmpty(Password))
+            {
+                ErrorMessage = "Programs.Login.nullError";
                 return;
             }
             if (IsRegister)
@@ -208,61 +127,22 @@
                 }
             }
             IsLoading = true;
-            Logger.LogInformation($"login checking IsVailedPlatform {SelectedPlatform}");
-            var (isVailed, TargetPlatform) = await clientManager.IsVailedPlatform(SelectedPlatform);
-            this.TargetPlatform = TargetPlatform;
-            if (!isVailed)
-            {
-                ErrorMessage = "Gabbracoon.Validator.PlatformConnectionError";
-                IsLoading = false;
-                return;
-            }
-            if (IsRegister)
-            {
-                try
-                {
-                    Logger.LogInformation($"login RegisterAccount {TargetPlatform}");
-                    var result = await clientManager.RegisterAccount(TargetPlatform, new RegisterAccount { Username = Username, Email = Email });
-                    if (!result.created)
-                    {
-                        ErrorMessage = result.error_msg.DataString;
-                    }
-                    else
-                    {
-                        GoToLogin();
-                    }
-                }
-                catch
-                {
-                    ErrorMessage = "API.DefaultError";
-                }
-                IsLoading = false;
-                return;
-            }
-            Logger.LogInformation($"login LoginAccount {TargetPlatform}");
-            var (loginLocation, errorMsg) = await clientManager.LoginAccount(TargetPlatform, Email);
-            if (errorMsg is not null)
-            {
-                ErrorMessage = errorMsg.DataString;
-                IsLoading = false;
-                return;
-            }
-
-            if (loginLocation is null)
+            var session = await clientManager.AuthenticateEmailAsync(Email, Password, Username, IsRegister);
+            if (session.IsExpired)
             {
                 ErrorMessage = "API.DefaultError";
-                IsLoading = false;
-                return;
             }
-            lock (LoginLocations)
-            {
-                LoginLocations = loginLocation;
-            }
+            IsLoading = false;
+        }
+        catch (ApiResponseException error)
+        {
+            ErrorMessage = error.Message;
             IsLoading = false;
         }
         catch (Exception ex)
         {
             Logger.LogError($"Failed to ExecuteAction in login. Error: {ex}");
+            IsLoading = false;
         }
     }
 

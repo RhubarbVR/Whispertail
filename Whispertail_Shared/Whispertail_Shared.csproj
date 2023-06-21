@@ -29,10 +29,11 @@
 		<PackageReference Include="Blazored.SessionStorage" Version="2.3.0" />
 		<PackageReference Include="Markdig" Version="0.31.0" />
 		<PackageReference Include="Microsoft.Fast.Components.FluentUI" Version="2.3.0" />
+		<PackageReference Include="NakamaClient" Version="3.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\GabbracoonClient\GabbracoonClient\GabbracoonClient.csproj" />
+	  <ProjectReference Include="..\Localizer\Localizer.csproj" />
 	</ItemGroup>
 
 </Project>

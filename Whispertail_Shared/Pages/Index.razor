@@ -1,7 +1,33 @@
 ﻿@page "/"
+@using Nakama;
+@inject ClientManager clientManager
 
-<LoginElement />
+@if (!isLogin)
+{
+    <LoginElement />
+}
+else
+{
+    
+}
+
+
 
 @code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        clientManager.SessionChanged += SessionChange;
+        SessionChange(clientManager.CurrentSession);
+    }
+
+    private void SessionChange(ISession session)
+    {
+        isLogin = session is not null;
+        StateHasChanged();
+    }
+
+    bool isLogin { get; set; }
+
 
 }
